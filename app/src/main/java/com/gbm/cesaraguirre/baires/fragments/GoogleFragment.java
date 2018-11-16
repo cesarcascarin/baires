@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.gbm.cesaraguirre.baires.R;
 
@@ -55,6 +56,7 @@ public class GoogleFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_google, container, false);
         WebView mWebview = v.findViewById(R.id.webView);
+        mWebview.setWebViewClient(new WebViewClient());
         mWebview.loadUrl("http://www.google.com");
         return v;
     }
