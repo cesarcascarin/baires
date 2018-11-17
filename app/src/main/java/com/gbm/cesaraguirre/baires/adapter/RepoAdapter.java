@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -23,21 +24,26 @@ public class RepoAdapter extends RecyclerView.Adapter<RepoAdapter.MyViewHolder> 
 
     @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
+    public MyViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, final int i) {
         TextView v = new TextView(parent.getContext());
         v.setText(myDataset.get(i).getName());
-
-        String url = myDataset.get(i).getHtml_url();
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(url));
-        parent.getContext().startActivity(intent);
 
         return new MyViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
+    public void onBindViewHolder(@NonNull final MyViewHolder myViewHolder, final int i) {
         myViewHolder.mTextView.setText(myDataset.get(i).getName());
+
+        myViewHolder.mTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final String url = myDataset.get(i).getHtml_url();
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(url));
+                myViewHolder.mTextView.getContext().startActivity(intent);
+            }
+        });
     }
 
     @Override

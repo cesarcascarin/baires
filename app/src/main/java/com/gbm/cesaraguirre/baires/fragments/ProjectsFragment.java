@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.gbm.cesaraguirre.baires.GithubService;
 import com.gbm.cesaraguirre.baires.R;
@@ -44,8 +45,10 @@ public class ProjectsFragment extends Fragment {
     private String mParam2;
 
     RecyclerView recyclerView;
+    ProgressBar loading;
 
     private OnFragmentInteractionListener mListener;
+    private GithubService gerritAPI;
 
     public ProjectsFragment() {
         // Required empty public constructor
@@ -83,20 +86,8 @@ public class ProjectsFragment extends Fragment {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
-        GithubService gerritAPI = retrofit.create(GithubService.class);
+        gerritAPI = retrofit.create(GithubService.class);
 
-        Call<com.gbm.cesaraguirre.baires.Response> call = gerritAPI.listRepos();
-        call.enqueue(new Callback<com.gbm.cesaraguirre.baires.Response>() {
-            @Override
-            public void onResponse(Call<com.gbm.cesaraguirre.baires.Response> call, Response<com.gbm.cesaraguirre.baires.Response> res) {
-                recyclerView.setAdapter(new RepoAdapter(res.body().getItems()));
-            }
-
-            @Override
-            public void onFailure(Call<com.gbm.cesaraguirre.baires.Response> call, Throwable t) {
-
-            }
-        });
 
     }
 
@@ -105,8 +96,25 @@ public class ProjectsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_projects, container, false);
+        loading = v.findViewById(R.id.loading);
         recyclerView = v.findViewById(R.id.repos);
         recyclerView.setLayoutManager(new LinearLayoutManager(container.getContext()));
+
+        Call<com.gbm.cesaraguirre.baires.Response> call = gerritAPI.listRepos();
+        loading.setVisibility(View.VISIBLE);
+        call.enqueue(new Callback<com.gbm.cesaraguirre.baires.Response>() {
+            @Override
+            public void onResponse(Call<com.gbm.cesaraguirre.baires.Response> call, Response<com.gbm.cesaraguirre.baires.Response> res) {
+                recyclerView.setAdapter(new RepoAdapter(res.body().getItems()));
+                loading.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<com.gbm.cesaraguirre.baires.Response> call, Throwable t) {
+                loading.setVisibility(View.GONE);
+            }
+        });
+
         return v;
     }
 

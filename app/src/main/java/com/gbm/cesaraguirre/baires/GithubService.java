@@ -9,6 +9,6 @@ import retrofit2.http.GET;
 
 public interface GithubService {
 
-    @GET("search/repositories?q=topic:kotlin")
+    @GET("search/repositories?q=topic:kotlin&per_page=10")
     Call<Response> listRepos();
 }
